@@ -35,12 +35,15 @@ para.local.sc = 0;
 para.local.dlcm = 0;
 para.local.sift = 0;
 
-para.global.si = 1;
+para.global.si = 0;
 para.global.lbp = 1;
 para.global.topo = 1;
 para.global.dlcm = 0;
 para.global.imm = 0;
 para.global.vol = 0;
+
+para.distintic.neckshirt = 1;
+
 
 % the file is start with date to distinguish
 flile_header = 'ProcessedData';
@@ -60,6 +63,10 @@ cat5 = [ 21    24    25    38    39    40    41    42    43    44 ];
 
 
 captures = 0:20;
+
+%Read distintic features
+file_dist_path = strcat(dataset_dir,'/distintic_feature.mat');
+load(file_dist_path);
 
 
 %% main loop
@@ -103,8 +110,10 @@ for iter_i = 1:length(clothes)
         capture_i = captures(iter_j);
         
         local_feature = [];
+        local_feature_simple = [];
         global_feature = [];
-        
+        global_feature_simple = [];
+
         %% read features from the disk
         % read local features (code)
         localFeatureFile = strcat(current_dir,coding_opt,'_codes_capture',num2str(capture_i),'.mat');
@@ -115,8 +124,20 @@ for iter_i = 1:length(clothes)
             load(localFeatureFile);
         end
         
+        factor=4;
+
         if para.local.bsp
             local_feature = [ local_feature, code.bsp ];
+            %B = code.bsp (1:factor:end);
+            %B = resample ( code.bsp ,1:length(code.bsp), factor); %% MEJORA =D
+            B = resample ( code.bsp , 4, 5,1,0);
+            E = -sum(code.bsp.*log2(code.bsp));
+            B =  code.bsp(1:125) + code.bsp(126:250); 
+            %local_feature_simple = [ local_feature_simple, [ sum(code.bsp) min(code.bsp) max(code.bsp) mean(code.bsp) median(code.bsp) std(code.bsp)  var(code.bsp) ] ];
+            local_feature_simple = [ local_feature_simple, code.bsp ];
+            % disp('bsp')
+            % size(code.bsp)
+            % size(B)
         end
         if para.local.finddd
             local_feature = [ local_feature, code.finddd ];
@@ -140,24 +161,66 @@ for iter_i = 1:length(clothes)
         
         if para.global.lbp
             global_feature = [ global_feature, global_descriptors.lbp ];
+            %B = global_descriptors.lbp (1:factor:end);
+            %B = resample ( global_descriptors.lbp , 1:length(global_descriptors.lbp), factor); mejora!!
+            %B = resample ( global_descriptors.lbp , 2, 3);    mantiene
+            [idx,C] = kmeans(reshape (global_descriptors.lbp,length(global_descriptors.lbp),1), factor); 
+            B = reshape ( C , 1, factor);  
+            E = -sum(global_descriptors.lbp.*log2(global_descriptors.lbp));
+            %global_feature_simple = [ global_feature_simple, [ sum(global_descriptors.lbp) min(global_descriptors.lbp) max(global_descriptors.lbp) mean(global_descriptors.lbp) median(global_descriptors.lbp) std(global_descriptors.lbp) var(global_descriptors.lbp) ] ];
+            global_feature_simple = [ global_feature_simple,  global_descriptors.lbp];
+            % disp('lbp')
+            % size(global_descriptors.lbp)
+            % size(B)
         end
         if para.global.si
             global_feature = [ global_feature, global_descriptors.si ];
+            %B = global_descriptors.si (1:factor:end);
+            %B = resample ( global_descriptors.si , 1:length(global_descriptors.si), factor);
+            B = resample ( global_descriptors.si , 2, 6);
+            E = -sum(global_descriptors.si.*log2(global_descriptors.si));
+            %global_feature_simple = [ global_feature_simple, [ sum(global_descriptors.si) min(global_descriptors.si) max(global_descriptors.si) mean(global_descriptors.si) median(global_descriptors.si) std(global_descriptors.si) var(global_descriptors.si) ] ];
+             global_feature_simple = [ global_feature_simple, global_descriptors.si  ];
+            % disp('si')
+            % size(global_descriptors.si)
+            % size(B)
         end
         if para.global.topo
             global_feature = [ global_feature, global_descriptors.topo ];
+            %B = global_descriptors.topo (1:factor:end);
+            %B = resample ( global_descriptors.topo , 1:length(global_descriptors.topo), factor);
+            B = resample ( global_descriptors.topo , 1, 3);
+            E = -sum(global_descriptors.topo.*log2(global_descriptors.topo));
+            %global_feature_simple = [ global_feature_simple, [ sum(global_descriptors.topo) min(global_descriptors.topo) max(global_descriptors.topo) mean(global_descriptors.topo) median(global_descriptors.topo) std(global_descriptors.topo) var(global_descriptors.topo)  ] ];        
+            global_feature_simple = [ global_feature_simple,  global_descriptors.topo ];
+            % disp('topo')
+            % size(global_descriptors.topo)
+            % size(B)
         end
         if para.global.dlcm
             global_feature = [ global_feature, global_descriptors.dlcm];
+             B = global_descriptors.dlcm (1:factor:end);
+            E = -sum(global_descriptors.dlcm.*log2(global_descriptors.dlcm));
+            %global_feature_simple = [ global_feature_simple, [ sum(global_descriptors.dlcm) min(global_descriptors.dlcm) max(global_descriptors.dlcm) mean(global_descriptors.dlcm) median(global_descriptors.dlcm) std(global_descriptors.dlcm) var(global_descriptors.dlcm)  ] ];        
+            global_feature_simple = [ global_feature_simple, B ];
         end
         if para.global.imm
             global_feature = [ global_feature, global_descriptors.imm];
+             B = global_descriptors.imm (1:factor:end);
+            E = -sum(global_descriptors.imm.*log2(global_descriptors.imm));
+            %global_feature_simple = [ global_feature_simple, [ sum(global_descriptors.imm) min(global_descriptors.imm) max(global_descriptors.imm) mean(global_descriptors.imm) median(global_descriptors.imm) std(global_descriptors.imm)  var(global_descriptors.imm)  ] ];        
+            global_feature_simple = [ global_feature_simple, B ];
         end
         if para.global.vol
             global_feature = [ global_feature, global_descriptors.vol];
+            B = global_descriptors.vol (1:factor:end);
+            E = -sum(global_descriptors.vol.*log2(global_descriptors.vol));
+            %global_feature_simple = [ global_feature_simple, [ sum(global_descriptors.vol) min(global_descriptors.vol) max(global_descriptors.vol) mean(global_descriptors.vol) median(global_descriptors.vol) std(global_descriptors.vol) var(global_descriptors.vol)  ] ];
+            global_feature_simple = [ global_feature_simple, B ];
         end        
         
-        instance = [ local_feature, global_feature ];
+       instance = [ local_feature, global_feature ];
+        % instance = [ local_feature_simple, global_feature_simple ];
         
         Instance = [ Instance; instance ];
         Label = [ Label; label ];
@@ -168,6 +231,10 @@ for iter_i = 1:length(clothes)
     %%
     disp(['fininsh reading of clothing ', num2str(clothes_i), ' ...']);
     clear label1 label2;
+end
+
+if para.distintic.neckshirt
+    Instance = [ Instance, distintic_feature.shirtneck ];
 end
 
 
@@ -258,7 +325,7 @@ para.cv_mode = 'clothes';
 %%
 
 
-[ result ] = x_fold_CV( Instance, Label, ClothesID, fold, expNum, 'myGP', para );
+%[ result ] = x_fold_CV( Instance, Label, ClothesID, fold, expNum, 'myGP', para );
 
 
 % % for expi = 1:1

@@ -17,7 +17,7 @@ clc
 
 
 %% sensor setting
-para.sensor = 'RH_fast'  % RH or RH_fast or kinect
+para.sensor = 'RH'  % RH or RH_fast or kinect
 
 %% feature setting
 para.local.bsp = 1;
