@@ -20,6 +20,8 @@ addpath('./vlfeat/toolbox');
 addpath(genpath('./RandomForest'));
 addpath('./FINDDD');
 addpath('./myGP');
+addpath('./gentleboost');
+addpath('./adaboost');
 
 vl_setup
 startup
@@ -35,15 +37,18 @@ para.local.sc = 0;
 para.local.dlcm = 0;
 para.local.sift = 0;
 
-para.global.si = 0;
+para.global.si = 1;
 para.global.lbp = 1;
 para.global.topo = 1;
 para.global.dlcm = 0;
 para.global.imm = 0;
 para.global.vol = 0;
 
-para.distintic.neckshirt = 1;
-
+para.distintic.keyparthist = 0;
+para.distintic.keyparthist_onlyneck = 1;
+para.distintic.keyparthist_onlywaist = 1;
+para.distintic.neckshirt = 0;
+para.distintic.size = 1;
 
 % the file is start with date to distinguish
 flile_header = 'ProcessedData';
@@ -65,7 +70,7 @@ cat5 = [ 21    24    25    38    39    40    41    42    43    44 ];
 captures = 0:20;
 
 %Read distintic features
-file_dist_path = strcat(dataset_dir,'/distintic_feature.mat');
+file_dist_path = '/home/koul/PreCloCaMa/clothes_recognitionMATLAB/data/distintic_feature.mat';
 load(file_dist_path);
 
 
@@ -236,6 +241,19 @@ end
 if para.distintic.neckshirt
     Instance = [ Instance, distintic_feature.shirtneck ];
 end
+if para.distintic.size
+    Instance = [ Instance, distintic_feature.size2d ];
+end
+if para.distintic.keyparthist
+    Instance = [ Instance, distintic_feature.keyparthist ];
+end
+if para.distintic.keyparthist_onlyneck
+    Instance = [ Instance, distintic_feature.keyparthist_onlyneck ];
+end
+if para.distintic.keyparthist_onlywaist
+    Instance = [ Instance, distintic_feature.keyparthist_onlywaist ];
+end
+
 
 
 %% generate model for robot practice
@@ -277,8 +295,9 @@ svm_opt = '-s 0 -c 10 -t 2 -g 0.01';
 %%
 
 % % % % % % training random forest
-% % rf_opt.treeNum = 1000;
-% % rf_opt.mtry = 200;
+rf_opt.treeNum = 1000;
+rf_opt.mtry = 200;
+para.opt = rf_opt;
 % % rf_struct = classRF_train( Instance, Label, rf_opt.treeNum, rf_opt.mtry );
 % % save('classifer.mat', 'rf_opt', 'rf_struct');
 
@@ -295,8 +314,11 @@ para.Ncore = 12;
 para.flag = true; 
 
 
-[ result_svm ] = x_fold_CV( Instance, Label, ClothesID, fold, expNum, 'SVM', para );
-
+% [ result_svm ] = x_fold_CV( Instance, Label, ClothesID, fold, expNum, 'SVM', para );
+% [ result_svm ] = x_fold_CV( Instance, Label, ClothesID, fold, expNum, 'adaboost', para );
+[ result_svm ] = x_fold_CV( Instance, Label, ClothesID, fold, expNum, 'NN', para );
+% [ result_svm ] = x_fold_CV( Instance, Label, ClothesID, fold, expNum, 'fuzzy', para );
+% [ result_svm ] = x_fold_CV( Instance, Label, ClothesID, fold, expNum, 'RF', para );
 
 disp('press Enter to continue ...');
 pause

@@ -150,10 +150,79 @@ for expi = 1:expN
             [predict_label, accuracy, dec_values] = libsvmpredict( testing_label, testing_inst, model);
             prob = dec_values;
         end
+        if strcmp(classifier,'adaboost')
+            % options.method       = 7;
+            % options.holding.rho  = 0.7;
+            % options.holding.K    = 50;
+
+            % options.weaklearner  = 0;
+            % options.epsi         = 0.1;%0.1;
+            % options.lambda       = 1e-2;
+            % options.max_ite      = 1000000;
+            % options.T            = 5;
+
+
+            % model_gentle  = gentleboost_model(training_inst',training_label , options);
+            % [predict_label , fxtrain]  = gentleboost_predict(testing_inst' , model_gentle);
+            % prob = fxtrain;
+            % % predict_label = predict_label';
+
+
+            verbose = true;
+            classifier = AdaBoost_mult(two_level_decision_tree, verbose); % blank classifier
+            nTree = 30;
+            C = classifier.train(training_inst,training_label, [], nTree);
+            predict_label  = C .predict(testing_inst);
+            % prob = 0;
+
+            % verbose = true;
+            % [ada_train, predict_label]= adaboost(training_inst,training_label, testing_inst)
+            % classifier = AdaBoost_mult(two_level_decision_tree, verbose); % blank classifier
+            % nTree = 30;
+            % C = classifier.train(training_inst,training_label, [], nTree);
+            % predict_label  = C .predict(testing_inst);
+            prob = 0; 
+        end
+        if strcmp(classifier,'NN')
+            options.epsilonk                      = 0.005;
+            options.epsilonl                      = 0.001;
+            options.epsilonlambda                 = 10e-8;
+            options.sigmastart                    = 2;
+            options.sigmaend                      = 10e-4;
+            options.sigmastretch                  = 10e-3;
+            options.threshold                     = 10e-10;
+            options.xi                            = 0.1;
+            options.nb_iterations                 = 3000;
+            options.metric_method                 = 1;
+            options.shuffle                       = 1;
+            options.updatelambda                  = 1;
+            options.Nproto_pclass                 = ones(1 ,  5);
+
+            [yproto , Wproto , lambda]                       = ini_proto(training_inst' , training_label' , options.Nproto_pclass);
+            [yproto_est , Wproto_est , lambda_est,  E_SRNG]  = srng_model(training_inst' , training_label' , options , yproto , Wproto , lambda);
+            [predict_label , disttrain_srng]               = NN_predict(testing_inst' , yproto_est , Wproto_est , lambda_est , options);
+            prob = disttrain_srng;
+            predict_label = predict_label';
+        end
+        if strcmp(classifier,'fuzzy')
+            tr_memberships = zeros(840,5);
+            for k = 1 : length(training_label)
+                tr_memberships(k,training_label(k)) = 1;
+            end
+            [y,predict_label] = f_knn(training_inst,tr_memberships,testing_inst, [1, 2 , 3, 4, 5,1,2,3,4,5]);
+
+            for k = 1 : length(predict_label (:,1,1))
+                predict_label(k,1,1) = mode(predict_label(k,1,:));
+            end
+            predict_label = predict_label (:,:,1);
+
+            prob = 0; 
+        end
         if strcmp(classifier,'RF')
             opt = para.opt;
             model = classRF_train( training_inst, training_label, opt.treeNum, opt.mtry );
             predict_label = classRF_predict( testing_inst, model );
+            prob = 0; 
         end
         
         if strcmp(classifier, 'myGP')
@@ -216,12 +285,19 @@ for expi = 1:expN
             predict_label(predict_label>0) = 1;
             predict_label(predict_label<=0) = -1;
         end
+
         
+
         test_label = Label(testIndex);
         Test_Label = [ Test_Label; test_label ];
         Predict_Label = [ Predict_Label; predict_label ];
         Prob = [ Prob; prob ];
+        %         size(predict_label)
+        % size(test_label)
+
         Accuracy(expi) = sum(predict_label == test_label) / length(test_label);
+
+
     end
     
 end
