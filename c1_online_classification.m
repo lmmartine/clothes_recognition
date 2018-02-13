@@ -1,4 +1,4 @@
-function resp = c1_online_classification(~,req,resp)
+function testresp = c1_online_classification(~,req,resp)
 	
 
 data_client = rossvcclient('/merge_data/get_sequence_data');

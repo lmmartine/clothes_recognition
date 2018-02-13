@@ -42,9 +42,9 @@ size_move=12;
 clothes = [1:50];
 captures = 0:20;
 kofkmeans = 256;
-coding_opt = 'LLC'
-pooling_opt = 'sum'
-knn = 5
+coding_opt = 'LLC';
+pooling_opt = 'sum';
+knn = 5;
 
 %% read code book 
 codebook_dir = [current_dir,'/Features/'];
@@ -52,16 +52,16 @@ load([codebook_dir,'code_book',num2str(kofkmeans),'.mat']);
 
 %% main loop
 
-for iter_j = 1:size_class
-for iter_k = 1:size_move
+% for iter_j = 1:size_class
+% for iter_k = 1:size_move
 
 
-name_file = [current_dir,'/Features/local_descriptors_' category int2str(iter_j) '_move' int2str(iter_k)]
-if exist([name_file '.mat'],'file')
-load([name_file '.mat']);
+% name_file = [current_dir,'/Features/local_descriptors_' category int2str(iter_j) '_move' int2str(iter_k)]
+% if exist([name_file '.mat'],'file')
+% load([name_file '.mat']);
     
-for iter_i = 1:length(allfeatures_local)
-    local_descriptors = allfeatures_local(iter_i);
+for iter_i = 1:length(video_features.local)
+    local_descriptors = video_features.local(iter_i);
 % for iter_i = 1:length(clothes)
 %     clothes_i = clothes(iter_i);
 %     disp(['start read descriptors of clothes id: ', num2str(clothes_i), ' ...']);
@@ -92,7 +92,7 @@ for iter_i = 1:length(allfeatures_local)
             if strcmp(coding_opt,'LLC')
                 code.bsp = LLC_pooling( local_descriptors.bsp, code_book.bsp, code_book.bsp_weights, knn, pooling_opt );
             end
-            allfeatures_local(iter_i).dscr_bsp = code.bsp;
+            video_features.local(iter_i).dscr_bsp = code.bsp;
         end
         if para.finddd
             if strcmp(coding_opt,'BOW')
@@ -144,11 +144,11 @@ for iter_i = 1:length(allfeatures_local)
         
         % clear code;
 end
-            save([current_dir,'/Features/local_descriptors_' category int2str(iter_j) '_move' int2str(iter_k) '.mat'],'allfeatures_local');
+            % save([current_dir,'/Features/local_descriptors_' category int2str(iter_j) '_move' int2str(iter_k) '.mat'],'allfeatures_local');
 
-end
+% end
     %%
     % disp(['fininsh coding of clothing ', num2str(clothes_i), ' ...']);
-end
-end
+% end
+% end
 

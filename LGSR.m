@@ -1,6 +1,6 @@
 function [ST]  = lgsr(videoP, collection_videos,type_distance)%, videoP_weight = 0, videoQ_weight = 0)
 % type_distance
-[nP, P_frames, feat_P] = size(videoP);
+[P_frames, feat_P] = size(videoP);
 [nC, collection_frames, feats] = size(collection_videos);
 
 % if not feat_P == feats
@@ -18,7 +18,7 @@ betha =1/1000000; %1000000,27
 gama = 1/16; % o 1/8 o 1/4 o 1/16
 
 
-Y = reshape(videoP, [P_frames feat_P]);
+Y = videoP;%reshape(videoP, [P_frames feat_P]);
 
 %Dc between Y and collection videos
 D_norm = true;
