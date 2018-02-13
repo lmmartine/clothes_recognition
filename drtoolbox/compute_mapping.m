@@ -123,6 +123,7 @@ function [mappedA, mapping] = compute_mapping(A, type, no_dims, varargin)
 % maintain the name of the original author.
 %
 % (C) Laurens van der Maaten, Delft University of Technology
+addpath('techniques');
 
     % Check inputs
     if nargin < 2
@@ -372,7 +373,7 @@ function [mappedA, mapping] = compute_mapping(A, type, no_dims, varargin)
             
         case {'PCA', 'KLM'}
             % Compute PCA mapping
-			[mappedA, mapping] = pca(A, no_dims);
+			[mappedA, mapping] = pca(A,no_dims);
             mapping.name = 'PCA';
             
         case {'SPCA', 'SimplePCA'}

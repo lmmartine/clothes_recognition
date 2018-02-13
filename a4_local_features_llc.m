@@ -30,11 +30,11 @@ startup
 flile_header = 'clothes_dataset_RH';
 %create firectory
 dataset_dir = ['~/',flile_header];
-current_dir='/home/lmartinez/bags';
+current_dir='~/bags';
 
-category = 'sweater';
+category = 'towel';
 size_class=3;
-size_move=10;
+size_move=12;
 
 % clothes is the number of flattening experiments, n_iteration is the
 % number of flattening iteration in each experiment [1:7,10:12,15:16]

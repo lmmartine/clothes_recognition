@@ -1,10 +1,10 @@
-function emd_value = emd(videoP, videoQ)%, videoP_weight = 0, videoQ_weight = 0)
+function emd_value = emd(videoP, videoQ, type_distance)%, videoP_weight = 0, videoQ_weight = 0)
 
 [n, P_frames, feat_P] = size(videoP);
 [n, Q_frames, feat_Q] = size(videoQ);
 
 emd_value = -1;
-method = 3;
+method = 1;
 
 if feat_P == feat_Q
 
@@ -29,7 +29,9 @@ if feat_P == feat_Q
 			v1 = reshape(v1,[1 length(v1)]);
 			v2=videoQ(1,j,:);
 			v2 = reshape(v2,[1 length(v2)]);
-			euclidean_dist = pdist([v1; v2]);
+            v1 = real (v1);
+            v2 = real (v2);
+			euclidean_dist = pdist([v1; v2], type_distance);
 			fij_hat= fij*sum(euclidean_dist);
 
 			emd_value = emd_value + fij_hat;
@@ -73,6 +75,8 @@ if feat_P == feat_Q
 			v1 = reshape(v1,[1 length(v1)]);
 			v2=videoQ(1,j,:);
 			v2 = reshape(v2,[1 length(v2)]);
+            v1
+            v2
 			euclidean_dist = pdist([v1; v2]);
 			fij_hat= fij*sum(euclidean_dist);
 

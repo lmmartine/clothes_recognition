@@ -1,6 +1,4 @@
 
-% Requirement : rosinit
-
 flag = true;
 imresizeScale = 0.2;
 
@@ -46,13 +44,13 @@ para.abheight = 0;
 para.iscontinue = 0;
 flag = 0; % change it to 1 for visualization
 
-current_dir='/home/lmartinez/bags';
-data_dir = '/home/lmartinez/bags/data/';
+current_dir='~/bags';
+data_dir = '~/bags/data/';
 if ~exist([current_dir,'/Features'],'dir')
     mkdir( [current_dir,'/Features'] );
 end
 % category = {'pant','shirt','tshirt','sweater'};
-category = {'shirt'};
+category = {'towel'};
 % category = 'tshirt';
 size_class=3;
 size_move=10;
@@ -63,10 +61,13 @@ size_xtion1 = 35;
 size_xtion2 = 4;
 
 for iter_i = 1:length(category)
-% for iter_j = 1:size_class
-	% for iter_k = 10:size_move
-iter_j = 3;
-iter_k =7;
+% for iter_j = 2:size_class
+% 	for iter_k = 1:size_move
+% 		if iter_j == 2 && iter_k ==1
+% 			continue
+% 		end
+iter_j = 1;
+iter_k = 9;
 		name_file = [data_dir category{iter_i} int2str(iter_j) '_move' int2str(iter_k)]
 		if exist([name_file '.mat'],'file')
 			load([name_file '.mat']);
@@ -176,9 +177,9 @@ iter_k =7;
 
 			end
 
-		% end
-	% end
-end
+		end
+% 	end
+% end
 
 
 

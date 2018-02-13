@@ -93,9 +93,9 @@ function mappedX = llc(X, neighbor, no_dims, R, Z, eig_impl)
         options.LSolver = 'bicgstab';
         [LY, evals] = jdqz(A, B, no_dims + 1, 'SM', options);
     else
-        options.disp = 0; 
+        options.disp = 1; 
         options.isreal = 1; 
-        options.issym = 1;
+        options.issym = 0;
         [LY, evals] = eigs(A, B, no_dims + 1, 'SM', options);
     end
     

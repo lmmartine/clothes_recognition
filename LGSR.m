@@ -1,5 +1,5 @@
-function [ST]  = lgsr(videoP, collection_videos)%, videoP_weight = 0, videoQ_weight = 0)
-
+function [ST]  = lgsr(videoP, collection_videos,type_distance)%, videoP_weight = 0, videoQ_weight = 0)
+% type_distance
 [nP, P_frames, feat_P] = size(videoP);
 [nC, collection_frames, feats] = size(collection_videos);
 
@@ -12,7 +12,7 @@ numer = 15;
 it=0;
 convergence = false;
 it_max=1000; % 84,27
-sigma= 1/8;% 1/2..1/4 ... 1/8 .. 1/40
+sigma= 1/40;% 1/2..1/4 ... 1/8 .. 1/40
 epsilon = 0.001; % 001
 betha =1/1000000; %1000000,27
 gama = 1/16; % o 1/8 o 1/4 o 1/16
@@ -25,7 +25,7 @@ D_norm = true;
 norm_dc = true;
 dc = zeros(nC, 1);
 for c=1:nC
-	dc(c) = EMD(videoP , collection_videos(c,:,:));
+	dc(c) = EMD(videoP , collection_videos(c,:,:),type_distance);
 end 
 if norm_dc
 	dc = dc / sum(dc);
@@ -40,7 +40,12 @@ for c=1:nC
 			
 			v2=collection_videos(c,j,:);
 			v2 = reshape(v2,[1 length(v2)]);
-			Dc(c,i,j) = exp((dc(c)-min(dc))/sigma)*pdist([v1; v2]);
+
+		            v1 = real (v1);
+            v2 = real (v2);
+            
+			Dc(c,i,j) = exp((dc(c)-min(dc))/sigma)*pdist([v1; v2], type_distance) ;
+
 		end
 	end
 	if c==numer && show_numer
@@ -68,7 +73,7 @@ while it < it_max && convergence == false
 		X = reshape(collection_videos(i,:,:),[collection_frames feats]);
 		STtmp = reshape(ST(i,:,:),[P_frames P_frames]);
 		xst = (X'*STtmp)';
-		Lc(i,1) = norm( (X)*(xst - Y)' ,'fro');
+		Lc(i,1) =norm( (X)*(xst - Y)' ,'inf'); % max(svd( (X)*(xst - Y)') 
 		% size (Lc)
 		if min(min(ST(i,:,:))) ~= 0 || max(max(ST(i,:,:))) ~= 0 
 			% Lc(i,1) = -1;
@@ -104,10 +109,10 @@ while it < it_max && convergence == false
 
 		DS = 0;
 		if min(min(STtmp)) ~= 0 || max(max(STtmp)) ~= 0 
-			DS = ( (Dctmp.*Dctmp.*STtmp)/norm( Dctmp.*STtmp ,'fro') );
+			DS = ( (Dctmp.*Dctmp.*STtmp)/norm( Dctmp.*STtmp ,'inf') ) ; %max(svd( Dctmp.*STtmp)) ) 
 			if valA==numer && show_numer
 				Dctmp
-				norm( Dctmp.*STtmp ,'fro')
+				norm( Dctmp.*STtmp ,'inf')
 				DS
 			end
 		end
@@ -123,7 +128,7 @@ while it < it_max && convergence == false
 
 		sttmp = ST_next(valA,:,:) - ST(valA,:,:);
 		sttmp = reshape(sttmp,[P_frames P_frames]);
-		if  norm(sttmp,'fro') < epsilon
+		if   norm(sttmp,'inf') < epsilon %max(svd(sttmp) ) <epsilon
 			ready(length(ready)+1) = valA;
 			% convergence = true
 			% va/lA
