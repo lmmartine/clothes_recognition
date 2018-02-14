@@ -17,7 +17,7 @@
     <!-- PACKAGE INFORMATION -->
     <!-- - - - - - - - - - - -->
 
-    <name>ug_srvs</name>
+    <name>uchile_srvs</name>
     <version>2.0.0</version>
     
     <description>ROS srv definitions for Clopema robot.</description>
@@ -35,7 +35,7 @@
     <build_depend>std_srvs</build_depend>
     <build_depend>geometry_msgs</build_depend>
     <build_depend>sensor_msgs</build_depend>
-    <build_depend>ug_msgs</build_depend>
+    <build_depend>uchile_msgs</build_depend>
 
 
     <!-- build dependencies -->
