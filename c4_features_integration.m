@@ -92,37 +92,37 @@ w_topo2 = w_topo1;
 % w_size2 = w_size1;
 
 % for iter_l = 1:2
-iter_l =1;
-global_feature_tmp = [];
-local_feature_tmp = [];
-distintic_feature_tmp = [];
+% iter_l =1;
+% global_feature_tmp = [];
+% local_feature_tmp = [];
+% distintic_feature_tmp = [];
 
-if para.local.bsp
-	vbsp = video_features.local(iter_l).dscr_bsp ;
-    local_feature_tmp = [ local_feature_tmp, vbsp*w_bsp1];
-end
-if para.global.lbp
-	vlbp=video_features.global(iter_l).lbp;
-    global_feature_tmp = [ global_feature_tmp, vlbp*w_lbp1];
-end
-if para.global.si
-	vsi=video_features.global(iter_l).si;
-    global_feature_tmp = [ global_feature_tmp, vsi*w_si1];
-end
-if para.global.topo
-	vtopo =video_features.global(iter_l).topo;
-    global_feature_tmp = [ global_feature_tmp, vtopo*w_topo1];
-end
-if para.distintic.size
-    distintic_feature_tmp = [ distintic_feature_tmp, video_features.dist.size2d(iter_l)*w_size1 ]; % /(640*480)
-end
+% if para.local.bsp
+% 	vbsp = video_features.local(iter_l).dscr_bsp ;
+%     local_feature_tmp = [ local_feature_tmp, vbsp*w_bsp1];
+% end
+% if para.global.lbp
+% 	vlbp=video_features.global(iter_l).lbp;
+%     global_feature_tmp = [ global_feature_tmp, vlbp*w_lbp1];
+% end
+% if para.global.si
+% 	vsi=video_features.global(iter_l).si;
+%     global_feature_tmp = [ global_feature_tmp, vsi*w_si1];
+% end
+% if para.global.topo
+% 	vtopo =video_features.global(iter_l).topo;
+%     global_feature_tmp = [ global_feature_tmp, vtopo*w_topo1];
+% end
+% if para.distintic.size
+%     distintic_feature_tmp = [ distintic_feature_tmp, video_features.dist.size2d(iter_l)*w_size1 ]; % /(640*480)
+% end
 
-local_feature = [ local_feature, local_feature_tmp ];
-global_feature = [ global_feature, global_feature_tmp ];
-distintic_feature = [ distintic_feature, distintic_feature_tmp ];
+% local_feature = [ local_feature, local_feature_tmp ];
+% global_feature = [ global_feature, global_feature_tmp ];
+% distintic_feature = [ distintic_feature, distintic_feature_tmp ];
 
-frame_instance = [local_feature_tmp, global_feature_tmp, distintic_feature_tmp ];
-video_instance = [video_instance; frame_instance];
+% frame_instance = [local_feature_tmp, global_feature_tmp, distintic_feature_tmp ];
+% video_instance = [video_instance; frame_instance];
 % end
 
 % for iter_l = 4+imginit:imgend
@@ -131,8 +131,9 @@ video_instance = [video_instance; frame_instance];
 % for iter_l = length(video_features.local)-imgend+1: length(video_features.local)-imginit +1 %25
 % for iter_l = 4 + imginit : 4+imgend
 
-for iter_l = length(video_features.local)-2: length(video_features.local) %25
+% for iter_l = length(video_features.local)-2: length(video_features.local) %25
 % for iter_l = max(5,length(video_features.local)-20): length(video_features.local)
+for iter_l = 1 : length(video_features.local)
     global_feature_tmp = [];
     local_feature_tmp = [];
     distintic_feature_tmp = [];

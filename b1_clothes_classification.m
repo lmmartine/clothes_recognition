@@ -58,8 +58,9 @@ current_dir='~/bags';
 data_dir = '~/bags/data/';
 
 
-% category = {'pant','shirt'};
-category = {'pant','shirt','tshirt','sweater','towel'};
+% category = {'pant','shirt','tshirt','sweater','towel'};
+category = {'pant','shirt','sweater','tshirt'};
+
 size_class=3;
 size_move=10;
 
@@ -72,11 +73,11 @@ id = 1;
 id_colecction = 1;
 for iter_i = 1:length(category)
 for iter_j = 1:size_class
-for iter_k = 1:size_move
+for iter_k = 5:size_move
 
-name_local_file = [current_dir,'/Features_select/local_descriptors_' category{iter_i} int2str(iter_j) '_move' int2str(iter_k)];
-name_global_file = [current_dir,'/Features_select/global_descriptors_' category{iter_i} int2str(iter_j) '_move' int2str(iter_k)];
-name_distintic_file = [current_dir,'/Features_select/distintic_descriptors_' category{iter_i} int2str(iter_j) '_move' int2str(iter_k)];
+name_local_file = [current_dir,'/Features/local_descriptors_' category{iter_i} int2str(iter_j) '_move' int2str(iter_k)];
+name_global_file = [current_dir,'/Features/global_descriptors_' category{iter_i} int2str(iter_j) '_move' int2str(iter_k)];
+name_distintic_file = [current_dir,'/Features/distintic_descriptors_' category{iter_i} int2str(iter_j) '_move' int2str(iter_k)];
 if exist([name_local_file '.mat'],'file') && exist([name_global_file '.mat'],'file') 
 load([name_local_file '.mat']);
 load([name_global_file '.mat']);
@@ -140,8 +141,8 @@ end
     % for iter_l = 4+imginit:imgend
     % length(allfeatures_local)
     % imgend
-    % for iter_l = length(allfeatures_local)-imgend+1: length(allfeatures_local)-imginit +1 %25
-    for iter_l = 4 + imginit : 4+imgend
+    for iter_l = length(allfeatures_local)-imgend+1: length(allfeatures_local)-imginit +1 %25
+    % for iter_l = 4 + imginit : 4+imgend
 
     % for iter_l = length(allfeatures_local)-25: length(allfeatures_local) %25
     % for iter_l = max(5,length(allfeatures_local)-20): length(allfeatures_local)

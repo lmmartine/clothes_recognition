@@ -1,7 +1,7 @@
 function [ST]  = lgsr(videoP, collection_videos,type_distance)%, videoP_weight = 0, videoQ_weight = 0)
 % type_distance
-[P_frames, feat_P] = size(videoP);
-[nC, collection_frames, feats] = size(collection_videos);
+[P_frames, feat_P] = size(videoP)
+[nC, collection_frames, feats] = size(collection_videos)
 
 % if not feat_P == feats
 % 	return
@@ -34,7 +34,7 @@ end
 Dc = zeros(nC, P_frames, P_frames);
 for c=1:nC
 	for i=1:P_frames
-	v1=videoP(1,i,:);
+	v1=videoP(i,:);
 	v1 = reshape(v1,[1 length(v1)]);
 		for j=1:P_frames
 			
