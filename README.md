@@ -30,9 +30,10 @@ savepath
 download dataset from: ...
 
 compress and move it to home directory i.e. ~/clothes_sequence_dataset
-
+```
+$ rosinit
 $ demo
-
+```
 
 
 
