@@ -2,6 +2,7 @@ function testresp = c1_online_classification(~,req,resp)
 	
 % global weight_feature
 global collecton_video
+global Label
 weight_feature= [40 40 60 10]; 
 
 data_client = rossvcclient('/merge_data/get_sequence_data');
@@ -27,7 +28,7 @@ disp( [ 'Apply LGSR ... OK (' int2str(toc) 'sec)']);
 
 
 tic
-[nC, collection_frames, feats] = size(collecton_video)
+[nC, collection_frames, feats] = size(collecton_video);
 Lc = zeros(nC, 1);
 % Qc = zeros(nC, 1);
 for c=1:nC
@@ -43,5 +44,11 @@ end
 
 disp(['Classifcation  ... OK (' int2str(toc) 'sec)']);
 category = {'pant','shirt','sweater','tshirt'};
-disp(['Class : ' int2str(idmin) ]);
-resp.ID = idmin;
+disp(['Class : ' int2str(Label(idmin)) category{Label(idmin)} ]);
+resp.ID = Label(idmin);
+
+
+data_client = rossvcclient('/merge_data/set_result');
+req = rosmessage(data_client);
+req.ID = Label(idmin);
+testresp = call(data_client,req,'Timeout',10);

@@ -1,7 +1,7 @@
 function [ST]  = lgsr(videoP, collection_videos,type_distance)%, videoP_weight = 0, videoQ_weight = 0)
 % type_distance
-[P_frames, feat_P] = size(videoP)
-[nC, collection_frames, feats] = size(collection_videos)
+[P_frames, feat_P] = size(videoP);
+[nC, collection_frames, feats] = size(collection_videos);
 
 % if not feat_P == feats
 % 	return
