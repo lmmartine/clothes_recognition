@@ -6,9 +6,13 @@
 ### Matlab with Custom Messages in ROS
 **Copy the ug_srvs directory to home**
 
-roboticsSupportPackages
+In matlab :
+```
+
+$ roboticsSupportPackages
 
 rosgenmsg('ug_srvs')
+```
 
 Follow indications in matlab:
 
