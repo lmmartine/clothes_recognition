@@ -1,0 +1,8 @@
+string frame_id
+sensor_msgs/Image[] img_rgb
+sensor_msgs/Image[] img_depth
+sensor_msgs/Image[] img_mask
+string[] inf_label
+float64[] inf_position
+---
+bool succeed

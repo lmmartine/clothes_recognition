@@ -1,0 +1,6 @@
+---
+sensor_msgs/Image[] img_rgb
+sensor_msgs/Image[] img_depth
+sensor_msgs/Image[] img_mask
+string[] inf_label
+float32[] inf_position
