@@ -31,11 +31,11 @@ coding_opt = 'LLC'
 para.isnorm = 1
 
 para.local.bsp = 1;
-para.local.finddd =0;
+para.local.finddd =1;
 para.local.lbp = 0;
-para.local.sc = 0;
-para.local.dlcm = 0;
-para.local.sift = 0;
+para.local.sc = 1;
+para.local.dlcm = 1;
+para.local.sift = 1;
 
 para.global.si = 1;
 para.global.lbp = 1;
@@ -45,15 +45,16 @@ para.global.imm = 0;
 para.global.vol = 0;
 
 para.distintic.keyparthist = 0;
-para.distintic.keyparthist_onlyneck = 1;
-para.distintic.keyparthist_onlywaist = 1;
+para.distintic.keyparthist_onlyneck = 0;
+para.distintic.keyparthist_onlywaist = 0;
 para.distintic.neckshirt = 0;
-para.distintic.size = 1;
+para.distintic.size = 0;
 
 % the file is start with date to distinguish
-flile_header = 'ProcessedData';
+flile_header = 'processed_data';%'ProcessedData';
 %create firectory
-dataset_dir = ['~/clothes_dataset_RH/',flile_header];
+% dataset_dir = ['~/clothes_dataset_RH/',flile_header];
+dataset_dir = '~/clothes_dataset_RH';
 
 % clothes is the number of flattening experiments, n_iteration is the
 % number of flattening iteration in each experiment [1:7,10:12,15:16];
@@ -79,6 +80,8 @@ load(file_dist_path);
 Instance = [];
 Label = [];
 ClothesID = [];
+collecton_video = [];
+id_colecction = 1;
 
 for iter_i = 1:length(clothes)
     clothes_i = clothes(iter_i);
@@ -121,7 +124,8 @@ for iter_i = 1:length(clothes)
 
         %% read features from the disk
         % read local features (code)
-        localFeatureFile = strcat(current_dir,coding_opt,'_codes_capture',num2str(capture_i),'.mat');
+        % localFeatureFile = strcat(current_dir,'Features/',coding_opt,'_codes_capture',num2str(capture_i),'.mat');
+        localFeatureFile = strcat(current_dir,'Codes/',coding_opt,'_codes_capture',num2str(capture_i),'.mat');
         
         if ~exist(localFeatureFile,'file')
             continue;
@@ -161,7 +165,7 @@ for iter_i = 1:length(clothes)
         end
         
         % read global features
-        globalFeatureFile = strcat(current_dir,'global_descriptors_capture',num2str(capture_i),'.mat');
+        globalFeatureFile = strcat(current_dir,'Features/global_descriptors_capture',num2str(capture_i),'.mat');
         load(globalFeatureFile);
         
         if para.global.lbp
@@ -230,7 +234,9 @@ for iter_i = 1:length(clothes)
         Instance = [ Instance; instance ];
         Label = [ Label; label ];
         ClothesID = [ ClothesID; clothes_i ];
-        
+
+        collecton_video (id_colecction,:,:) = instance;
+        id_colecction = id_colecction+1;
         clear instance;
     end
     %%
@@ -263,15 +269,15 @@ else
     norm = [];
 end
 
-clearvars -except Instance Label ClothesID norm; 
+% clearvars -except Instance Label ClothesID norm; 
 
 
 %% traning model for robot practical recognition
 %train SVM model
 svm_opt = '-s 0 -c 10 -t 2 -g 0.01';
 
-% % svm_struct = libsvmtrain( Label, Instance, svm_opt );
-% % save('classifier_demo.mat','svm_opt','norm','svm_struct');
+svm_struct = libsvmtrain( Label, Instance, svm_opt );
+save('classifier_svm.mat','svm_opt','norm','svm_struct');
 % % %%
 
 %% training GP
@@ -313,12 +319,12 @@ para.c = c;
 para.Ncore = 12;
 para.flag = true; 
 
-
-% [ result_svm ] = x_fold_CV( Instance, Label, ClothesID, fold, expNum, 'SVM', para );
+[ result_svm ] = x_fold_CV( Instance, Label, ClothesID, fold, expNum, 'SVM', para );
 % [ result_svm ] = x_fold_CV( Instance, Label, ClothesID, fold, expNum, 'adaboost', para );
-[ result_svm ] = x_fold_CV( Instance, Label, ClothesID, fold, expNum, 'NN', para );
+% [ result_svm ] = x_fold_CV( Instance, Label, ClothesID, fold, expNum, 'NN', para );
 % [ result_svm ] = x_fold_CV( Instance, Label, ClothesID, fold, expNum, 'fuzzy', para );
 % [ result_svm ] = x_fold_CV( Instance, Label, ClothesID, fold, expNum, 'RF', para );
+
 
 disp('press Enter to continue ...');
 pause

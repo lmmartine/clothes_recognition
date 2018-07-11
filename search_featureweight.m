@@ -1,6 +1,11 @@
 
-
-% options_weight = [10 30 60 90];
+weight_feature = [40    60    60    40  60  60  40 80 100 5 180];
+weight_feature2 = [40    60    60    40  60  60  40 80 20 80 300];
+% [collecton_video, Label] = b1_clothes_classification(weight_feature, weight_feature2, 1, 15);
+% weight_feature = [60    60    60    60  ];
+% [collecton_video, Label] = b1_clothes_classification(weight_feature, 1, 5);
+% [best_result1, best_result2] = evaluate_lgsr(collecton_video, Label, vector_train, vector_test, 'euclidean')
+% weight_feature
 
 
 % parpool(4)
@@ -31,8 +36,9 @@
 % end
 
 best_result1 = 0;
+% weight_feature= [60 60 120 10 60];  % 0.6
 
-while best_result1 < 0.64
+while best_result1 < 0.7
 	labels = unique(Label);
 	train_percent = 0.6;
 	test_percent = 1 - train_percent;
@@ -49,9 +55,12 @@ while best_result1 < 0.64
 	vector_test = find(vector_test== 1);
 
 
-	weight_feature= [15 40 120 10];  % 0.6
 
-	[collecton_video, Label] = b1_clothes_classification(weight_feature, 13, 42);
-	[best_result1, best_result2] = evaluate_lgsr(collecton_video, Label, vector_train, vector_test, 'euclidean');
+[collecton_video, Label] = b1_clothes_classification(weight_feature, weight_feature2, 1, 15);
+[best_result1, best_result2] = evaluate_lgsr(collecton_video, Label, vector_train, vector_test, 'euclidean',5,100);
+
+% 	[collecton_video, Label] = b1_clothes_classification(weight_feature, 1, 5);
+% 	[best_result1, best_result2] = evaluate_lgsr(collecton_video, Label, vector_train, vector_test, 'euclidean');
+% 	best_result1
 end
 

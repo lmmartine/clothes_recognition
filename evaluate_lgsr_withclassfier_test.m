@@ -36,13 +36,14 @@ for id=1:length(vector_test)
 	id_c = Label (int8(i));
 	id_c
 	Y = collecton_video(i,:,:);
-
+	Y = reshape(Y, [collection_frames feats]);
 	ST  = LGSR(Y, collecton_video_sub, type_distance);
 	[st1, st2, st3] = size(ST);
 
-	Y = reshape(Y, [collection_frames feats]);
+
 	Lc = zeros(nC2, 1);
 	Qc = zeros(nC2, 1);
+	XST = zeros(nC2, feats, collection_frames);
 	for c=1:nC2
 		% if Label_sub (int8 (c) ) ~= id_c
 		% 	continue
@@ -50,6 +51,7 @@ for id=1:length(vector_test)
 		X = reshape(collecton_video_sub(c,:,:),[collection_frames feats]);
 		STtmp = reshape(ST(c,:,:),[collection_frames collection_frames]);
 		xst = (X'*STtmp)';
+		XST(c,:,:) = (X'*STtmp);
 		Lc(c,1) = 0.5*norm( (Y - xst ) ,'inf'); % max(svd((Y - xst ) ) ) ;
 		Qc(c,1) = norm( STtmp,'inf')   /  norm( (Y - xst ) ,'inf'); %max(svd(STtmp) ) /max(svd( (Y - xst )) );
 	end
@@ -57,21 +59,21 @@ for id=1:length(vector_test)
 	[a,idmin]= min(Lc);
 	[a,idmax]= max(Qc);
 	[B,I] = sort(Lc);
-	B(1:5)
+	% B(1:5)
 	C=Label_sub (I); 
-	C(1:5)
+	C(1:10)
 
-	ST2 = ST(I,:,:);
+	ST2 = XST(I,:,:);
 		% STvector = reshape(ST, [1 st1 st2*st3]);
-	matrix_test = zeros (5 , st2*st3);
+	matrix_test = zeros (10 , collection_frames*feats);
 
-	for j = 1:5
-		STvector = reshape(ST2(j,:,:), [1 st2*st3]);
-		matrix_test(j ,: ) = STvector;
+	for j = 1:10
+		STvector = reshape(ST2(j,:,:), [1 collection_frames*feats]);
+		matrix_test(j ,: ) = STvector ;
 	end
 	
-	[label,score] = predict(SVMModel,matrix_test);
-	label
+	[label,score] = predict(SVMModel,matrix_test)
+	% label
 	% [a,idmax]= max(score);
 	% [a2,idmax2]= max(a);
 
@@ -112,23 +114,26 @@ end
 	% 	end
 	% end
 	
-[nlabel, n1, n2] = size(matrix_train_true);
-matrix_train_true_2d = reshape(matrix_train_true(1,:,:), [n1 n2]);
-matrix_train_true_2da = reshape(matrix_train_true(2,:,:), [n1 n2]);
-matrix_train_true_2db = reshape(matrix_train_true(3,:,:), [n1 n2]);
-matrix_train_true_2dc = reshape(matrix_train_true(4,:,:), [n1 n2]);
-% matrix_train_false_2da = reshape(matrix_train_false(1, 1, :,:), [n1 n2]);
-% matrix_train_false_2db = reshape(matrix_train_false(1, 3, :,:), [n1 n2]);
-% matrix_train_false_2dc = reshape(matrix_train_false(1, 4, :,:), [n1 n2]);
+% [nlabel, n1, n2] = size(matrix_tr ain_true);
+% matrix_train_true_2d = reshape(matrix_train_true(1,:,:), [n1 n2]);
+% matrix_train_true_2da = reshape(matrix_train_true(2,:,:), [n1 n2]);
+% matrix_train_true_2db = reshape(matrix_train_true(3,:,:), [n1 n2]);
+% matrix_train_true_2dc = reshape(matrix_train_true(4,:,:), [n1 n2]);
+% matrix_train_true_2dd = reshape(matrix_train_true(5,:,:), [n1 n2]);
 
-% X=[ matrix_train_true_2d ;  matrix_train_true_2dc];
-X=[matrix_train_true_2d; matrix_train_true_2da ; matrix_train_true_2db; matrix_train_true_2dc];
-% X=[matrix_train_true_2d; matrix_train_false_2da ; matrix_train_false_2db; matrix_train_false_2dc];
-% y = [ones(n1,1)*1 ; ones(n1,1)*4];
-y = [ones(n1,1)*1  ; ones(n1,1)*2 ; ones(n1,1)*3 ; ones(n1,1)*4];
+% % matrix_train_false_2da = reshape(matrix_train_false(1, 1, :,:), [n1 n2]);
+% % matrix_train_false_2db = reshape(matrix_train_false(1, 3, :,:), [n1 n2]);
+% % matrix_train_false_2dc = reshape(matrix_train_false(1, 4, :,:), [n1 n2]);
 
-% SVMModel = fitcsvm(X,y);
-SVMModel = fitcecoc(X,y);
+% % X=[ matrix_train_true_2d ;  matrix_train_true_2dc];
+% X=[matrix_train_true_2d; matrix_train_true_2da ; matrix_train_true_2db; matrix_train_true_2dc;matrix_train_true_2dd];
+% % X=[matrix_train_true_2d; matrix_train_false_2da ; matrix_train_false_2db; matrix_train_false_2dc];
+% % y = [ones(n1,1)*1 ; ones(n1,1)*4];
+% y = [ones(n1,1)*1  ; ones(n1,1)*2 ; ones(n1,1)*3 ; ones(n1,1)*4; ones(n1,1)*5];
+
+% % SVMModel = fitcsvm(X,y);
+% t = templateSVM('KernelFunction','rbf');
+% SVMModel = fitcecoc(X,y,'Learners',t)
 
 
 % nlabel, matrix_train_true(1,:,:)

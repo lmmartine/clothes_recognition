@@ -17,19 +17,19 @@ clc
 
 
 %% sensor setting
-para.sensor = 'RH'  % RH or RH_fast or kinect
+para.sensor = 'kinect'  % RH or RH_fast or kinect
 
 %% feature setting
 para.local.bsp = 1;
-para.local.finddd = 0;
+para.local.finddd = 1;
 para.local.lbp = 0;
-para.local.sc = 0;
-para.local.dlcm = 0;
-para.local.sift = 0;
+para.local.sc = 1;
+para.local.dlcm = 1;
+para.local.sift = 1;
 
-para.global.si = 1;
-para.global.lbp = 1;
-para.global.topo = 1;
+para.global.si = 0;
+para.global.lbp = 0;
+para.global.topo = 0;
 para.global.dlcm = 0;
 para.global.imm = 0;
 para.global.vol = 0;
@@ -57,14 +57,14 @@ startup
 
 %% experiment setting
 % the file is start with date to distinguish
-flile_header = 'clothes_dataset_RH';
+flile_header = 'clothes_dataset_RH/processed_data';%'clothes_dataset_RH';
 %create firectory
 dataset_dir = ['~/',flile_header]; % change to your directory
 
 
 % clothes is the number of flattening experiments, n_iteration is the
 % number of flattening iteration in each experiment [1:7,10:12,15:16]
-clothes = [1:50];
+clothes = [1:50];%[1:50];
 captures = 0:20;
 
 %%

@@ -6,11 +6,11 @@ clc
 flag = true;
  
 para.bsp = 1;
-para.finddd = 0;
+para.finddd = 1;
 para.lbp = 0;
-para.sc = 0;
-para.dlcm = 0;
-para.sift = 0;
+para.sc = 1;
+para.dlcm = 1;
+para.sift = 1;
 is_norm = 1;
 
 addpath('./BSplineFitting');
@@ -27,7 +27,7 @@ startup
 
 %% script setting
 % the file is start with date to distinguish
-flile_header = 'clothes_dataset_RH';
+flile_header = 'clothes_dataset_RH/processed_data';
 %create firectory
 dataset_dir = ['~/',flile_header];
 

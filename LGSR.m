@@ -1,4 +1,4 @@
-function [ST]  = lgsr(videoP, collection_videos,type_distance)%, videoP_weight = 0, videoQ_weight = 0)
+function [ST]  = lgsr(videoP, collection_videos,type_distance, nexp)%, videoP_weight = 0, videoQ_weight = 0)
 % type_distance
 [P_frames, feat_P] = size(videoP);
 [nC, collection_frames, feats] = size(collection_videos);
@@ -11,12 +11,12 @@ numer = 15;
 
 it=0;
 convergence = false;
-it_max=1000; % 84,27
-sigma= 1/40;% 1/2..1/4 ... 1/8 .. 1/40
+it_max=100; % 84,27
+sigma= 1/4;% 1/2..1/4 ... 1/8 .. 1/40
 epsilon = 0.001; % 001
-betha =1/1000000; %1000000,27
+betha =1/100000; %1000000,27
 gama = 1/16; % o 1/8 o 1/4 o 1/16
-
+% nexp = 7;
 
 Y = videoP;%reshape(videoP, [P_frames feat_P]);
 
@@ -41,18 +41,12 @@ for c=1:nC
 			v2=collection_videos(c,j,:);
 			v2 = reshape(v2,[1 length(v2)]);
 
-		            v1 = real (v1);
+		    v1 = real (v1);
             v2 = real (v2);
             
 			Dc(c,i,j) = exp((dc(c)-min(dc))/sigma)*pdist([v1; v2], type_distance) ;
 
 		end
-	end
-	if c==numer && show_numer
-		dc(c)
-		min(dc)
-		exp((dc(c)-min(dc))/sigma)
-		Dc(c,:,:)
 	end
 	if D_norm
 		Dc(c,:,:)= Dc(c,:,:)/sum(sum(Dc(c,:,:)));
@@ -73,7 +67,8 @@ while it < it_max && convergence == false
 		X = reshape(collection_videos(i,:,:),[collection_frames feats]);
 		STtmp = reshape(ST(i,:,:),[P_frames P_frames]);
 		xst = (X'*STtmp)';
-		Lc(i,1) =norm( (X)*(xst - Y)' ,'inf'); % max(svd( (X)*(xst - Y)') 
+		Lc(i,1) = sum(sum(abs(((X)*(xst - Y)')).^nexp)).^(1/nexp); 
+		% Lc(i,1) = max(svd( (X)*(xst - Y)') );
 		% size (Lc)
 		if min(min(ST(i,:,:))) ~= 0 || max(max(ST(i,:,:))) ~= 0 
 			% Lc(i,1) = -1;
@@ -103,13 +98,16 @@ while it < it_max && convergence == false
 
 		xst = (X'*STtmp)';
 		Lc_tmp =  X*(xst-Y)';
+		% yst = (Y'*STtmp)';
+		% Lc_tmp =  (Y*yst'-X*xst');
 		if valA==numer && show_numer
 			Lc_tmp
 		end
 
 		DS = 0;
 		if min(min(STtmp)) ~= 0 || max(max(STtmp)) ~= 0 
-			DS = ( (Dctmp.*Dctmp.*STtmp)/norm( Dctmp.*STtmp ,'inf') ) ; %max(svd( Dctmp.*STtmp)) ) 
+			DS = ( (Dctmp.*Dctmp.*STtmp)/sum(sum(abs((Dctmp.*STtmp)).^nexp)).^(1/nexp) ) ; 
+			% DS = ( (Dctmp.*Dctmp.*STtmp)/ max(svd( Dctmp.*STtmp)) ) ;
 			if valA==numer && show_numer
 				Dctmp
 				norm( Dctmp.*STtmp ,'inf')
@@ -117,7 +115,7 @@ while it < it_max && convergence == false
 			end
 		end
 		
-		GS = Lc_tmp + gama * DS  ;
+		GS = Lc_tmp + gama * DS ;
 		GS = reshape(GS,[1 P_frames P_frames]);
 
 		ST_next(valA,:,:) = ST(valA,:,:) - betha * GS;
@@ -128,12 +126,18 @@ while it < it_max && convergence == false
 
 		sttmp = ST_next(valA,:,:) - ST(valA,:,:);
 		sttmp = reshape(sttmp,[P_frames P_frames]);
-		if   norm(sttmp,'inf') < epsilon %max(svd(sttmp) ) <epsilon
+		% if   norm(sttmp,'inf') < epsilon %max(svd(sttmp) ) <epsilon
+		% 	ready(length(ready)+1) = valA;
+		% 	% convergence = true
+		% 	% va/lA
+		% end
+		if   norm(sttmp,'inf') < epsilon %&& length (A) == nC%max(svd(sttmp) ) <epsilon
 			ready(length(ready)+1) = valA;
-			% convergence = true
-			% va/lA
+			% length (ready)
+			if length (ready) == nC
+				convergence = true;
+			end
 		end
-
 	end
 
 	it=it+1;

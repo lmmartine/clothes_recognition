@@ -27,7 +27,7 @@ end
     
 finddd_descriptors = cell(12,1);
 
-parfor b = 1:12
+for b = 1:12
     finddd_descriptors{b} = zeros(length(pX{b}),para.o*para.s(1)*para.s(2));
     
     for i = 1:length(pX{b})
@@ -41,11 +41,12 @@ parfor b = 1:12
             uSize = fix(patchSize(2)/2)*2+1; % patch height
             wSize = fix(patchSize(1)/2)*2+1; % patch length
             
-            if size(patch,1)~=uSize || size(patch,2)~=wSize
-                continue;
-            end
+            %if size(patch,1)~=uSize || size(patch,2)~=wSize
+             %   continue;
+            %end
             
             [ finddd_descriptori ] = computeFinddd( patch, para );
+          
         end
         finddd_descriptors{b}(i,:) =  finddd_descriptori;
     end
